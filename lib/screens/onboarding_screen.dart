@@ -3,6 +3,8 @@ import 'package:flutter_application_1/Data/onboarding_data.dart';
 import 'package:flutter_application_1/contants/colors.dart';
 import 'package:flutter_application_1/screens/onboarding/front_page.dart';
 import 'package:flutter_application_1/screens/onboarding/shared_onboarding_screen.dart';
+import 'package:flutter_application_1/screens/user_data_screen.dart';
+import 'package:flutter_application_1/widgets/custom_button.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -13,8 +15,9 @@ class OnboardingScreen extends StatefulWidget {
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
-
   final PageController _controller = PageController();
+
+  bool showDetailsPage = false;
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +29,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               children: [
                 PageView(
                   controller: _controller,
+                  onPageChanged: (index) {
+                    setState(() {
+                      showDetailsPage = index == 3;
+                    });
+                  },
                   children: [
                     FrontPage(),
                     SharedOnboardingScreen(
@@ -48,24 +56,64 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       description:
                           OnboardingData.onboardingDataList[2].description,
                     ),
-
-                    Container(color: Colors.blue),
-                    Container(color: Colors.yellow),
                   ],
                 ),
 
                 // Page dot indicator
                 Container(
                   alignment: Alignment(0, 0.75),
-                  
+
                   child: SmoothPageIndicator(
-                  controller: _controller,
-                  count: 4,
-                  effect: WormEffect(
-                    activeDotColor: kMainColor,
-                    dotColor: kLightGrey, 
+                    controller: _controller,
+                    count: 4,
+                    effect: WormEffect(
+                      activeDotColor: kMainColor,
+                      dotColor: kLightGrey,
+                    ),
                   ),
-                )),
+                ),
+                // Navigatiion buttons
+                Positioned(
+                  bottom: 15,
+                  left: 0,
+                  right: 0,
+                  child: Padding(
+                    padding: const EdgeInsets.all(30.0),
+                    child: !showDetailsPage
+                        ? GestureDetector(
+                            onTap: () {
+                              _controller.animateToPage(
+                                _controller.page!.toInt() + 1,
+                                duration: Duration(milliseconds: 400),
+                                curve: Curves.easeInOut,
+                              );
+                            },
+                            child: CustomButton(
+                              buttonName: showDetailsPage
+                                  ? "Get Started"
+                                  : "Next",
+                              buttoncolor: kMainColor,
+                            ),
+                          )
+                        : GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => UserDataScreen(),
+                                ),
+                              );
+                            },
+
+                            child: CustomButton(
+                              buttonName: showDetailsPage
+                                  ? "Get Started"
+                                  : "Next",
+                              buttoncolor: kMainColor,
+                            ),
+                          ),
+                  ),
+                ),
               ],
             ),
           ),
