@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/contants/colors.dart';
 import 'package:flutter_application_1/contants/constant.dart';
+import 'package:flutter_application_1/screens/main_screen.dart';
+import 'package:flutter_application_1/services/user_service.dart';
 import 'package:flutter_application_1/widgets/custom_button.dart';
 
 class UserDataScreen extends StatefulWidget {
@@ -157,13 +159,32 @@ class _UserDataScreenState extends State<UserDataScreen> {
                       ),
                       SizedBox(height: 40),
                       GestureDetector(
-                        onTap: () {
+                        onTap: () async {
                           if (_formKey.currentState!.validate()) {
                             String userName = _userNameController.text;
                             String email = _emailController.text;
                             String password = _passwordController.text;
                             String confirmPassword =
                                 _confirmPasswordController.text;
+
+                            // save user data for local device
+                            await UserServices.storeUserDetails(
+                              userName: userName,
+                              email: email,
+                              password: password,
+                              confirmPassword: confirmPassword,
+                              context: context,
+                            );
+                            if (context.mounted) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    return MainScreen();
+                                  },
+                                ),
+                              );
+                            }
                           }
                         },
                         child: CustomButton(
